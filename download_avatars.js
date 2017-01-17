@@ -12,7 +12,6 @@ var repoName = process.argv[3];
 var GITHUB_USER = "irene-webmaster";
 var GITHUB_TOKEN = "d7888ba3b192390894c72e3a6ec33dc2c6e28988";
 
-
 function getRepoContributors(repoOwner, repoName, cb) {
   var requestURL = 'https://'+ GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors?per_page=100';
   console.log(requestURL);
@@ -51,15 +50,11 @@ function downloadImageByURL(url, filePath) {
       if (err) {
         return console.error(err);
       }
-      console.log('created');
     })
   }
   request.get(url)
          .on('error', function(err) {
             console.log('Error ', err);
-         })
-         .on('response', function(response) {
-            console.log('Response Status Message: ', response.statusMessage);
          })
          .on('end', function() {
             console.log('Download complete.');
@@ -70,5 +65,5 @@ function downloadImageByURL(url, filePath) {
 
 getRepoContributors(repoOwner, repoName, function(err, result) {
   console.log("Errors:", err);
-  console.log("Result:", result);
+  console.log("Number of contributors:", result.length);
 });
