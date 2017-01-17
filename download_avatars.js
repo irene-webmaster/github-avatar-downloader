@@ -19,14 +19,17 @@ function getRepoContributors(repoOwner, repoName, cb) {
   request(options, function (error, response, body) {
 
     if (!error && response.statusCode == 200) {
-      cb(null, JSON.parse(body));
-
+      var avatarUrl = '';
+      var filePath = '';
       var data = JSON.parse(body);
+
       data.forEach(function(x){
-        url = x.avatar_url;
+        avatarUrl = x.avatar_url;
         filePath = 'avatars/' + x.login + '.jpg';
-        // console.log(x.avatar_url);
+        downloadImageByURL(avatarUrl, filePath);
       });
+
+      cb(null, JSON.parse(body));
     }
   })
 }
@@ -35,12 +38,14 @@ function downloadImageByURL(url, filePath) {
   var request = require('request');
   var fs = require('fs');
 
-  fs.mkdir('./avatars', function(err, data) {
-    if (err) {
-      return console.error(err);
-    }
-    console.log('created');
-  })
+  if(!fs.existsSync('./avatars')) {
+    fs.mkdir('./avatars', function(err, data) {
+      if (err) {
+        return console.error(err);
+      }
+      console.log('created');
+    })
+  }
   request.get(url)
          .on('error', function(err) {
             console.log('Error ', err);
@@ -52,10 +57,8 @@ function downloadImageByURL(url, filePath) {
             console.log('Download complete.');
          })
          .pipe(fs.createWriteStream(filePath));
+
 }
-
-
-
 
 getRepoContributors("nodejs", "node", function(err, result) {
   console.log("Errors:", err);
