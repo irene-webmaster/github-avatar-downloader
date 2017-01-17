@@ -23,11 +23,38 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
       var data = JSON.parse(body);
       data.forEach(function(x){
-        console.log(x.avatar_url);
+        url = x.avatar_url;
+        filePath = 'avatars/' + x.login + '.jpg';
+        // console.log(x.avatar_url);
       });
     }
   })
 }
+
+function downloadImageByURL(url, filePath) {
+  var request = require('request');
+  var fs = require('fs');
+
+  fs.mkdir('./avatars', function(err, data) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log('created');
+  })
+  request.get(url)
+         .on('error', function(err) {
+            console.log('Error ', err);
+         })
+         .on('response', function(response) {
+            console.log('Response Status Message: ', response.statusMessage);
+         })
+         .on('end', function() {
+            console.log('Download complete.');
+         })
+         .pipe(fs.createWriteStream(filePath));
+}
+
+
 
 
 getRepoContributors("nodejs", "node", function(err, result) {
